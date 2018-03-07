@@ -47,6 +47,37 @@ describe('/api', () => {
       })
     })
   })
+  describe('/topics', () => {
+    it('GET returns all topics', () => {
+      return request
+        .get('/api/topics')
+        .expect(200)
+        .then(res => {
+        expect(res.body.topics.length).to.equal(3)
+        expect(res.body.topics[0].title).to.equal('Football')
+        });
+    });
+    it('GET returns all articles for a topic', () => {
+      return request
+        .get('/api/topics/football/articles')
+        .expect(200)
+        .then(res => {
+        expect(res.body.articles.length).to.equal(1)
+        expect(res.body.articles[0].belongs_to).to.equal('football')
+        });
+    });
+  });
+  describe('/users', () => {
+    it('GET returns user profile by username', () => {
+      const username = 'northcoder'
+      return request
+        .get(`/api/users/${username}`)
+        .expect(200)
+        .then(res => {
+         expect(res.body.user.username).to.equal(username)
+        });
+      });
+    });
 })
 
 
