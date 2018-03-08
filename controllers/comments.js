@@ -11,9 +11,21 @@ const deleteComment = (req, res, next) => {
     .catch(next)
 }
 
+const putCommentVote = (req, res, next) => {
+  const commentID = req.params.comment_id;
+  const vote = req.query.vote;
+  Comment.findOne({_id: commentID }).lean()
+     .then(comment => {
+         if (vote === 'up') comment.votes += 1;
+         else if (vote === 'down' && comment.votes) comment.votes -=1;
+         res.send( {comment} ) 
+     })
+     .catch(next);
+}
 
 
 
 
 
-module.exports = { deleteComment };
+
+module.exports = { deleteComment, putCommentVote };
