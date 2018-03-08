@@ -26,4 +26,20 @@ const getCommentsByArticle = (req, res, next) => {
     .catch(err => console.log(err))
 }
 
-module.exports = { getAllArticles, getCommentsByArticle, getArticleById };
+const postComment = (req, res, next) => {
+  const articleID = req.params.article_id;
+  const newComment = new Comment({
+    body: req.body.comment,
+    belongs_to: articleID,
+    created_by: req.body.username,
+    created_at: new Date().getTime()
+  })
+  newComment.save()
+    .then(savedComment => res.status(201).send({ savedComment }))
+    .catch(next);
+}
+
+
+
+
+module.exports = { getAllArticles, getCommentsByArticle, getArticleById, postComment };

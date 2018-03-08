@@ -40,11 +40,25 @@ describe('/api', () => {
     it('GET returns a single article by its ID', () => {
       const articleID = testData.articles[0]._id;
       return request
-      .get(`/api/articles/${articleID}`)
-      .expect(200)
-      .then(res => {
+        .get(`/api/articles/${articleID}`)
+        .expect(200)
+        .then(res => {
         expect(res.body.article._id).to.equal(`${articleID}`)
       })
+    })
+    it.only('POST posts a new comment to an article', () => {
+      const data = { "comment": "test data comment" };
+      const articleID = testData.articles[0]._id;
+      return request
+        .post(`/api/articles/${articleID}/comments`)
+        .send(data)
+        .expect(201)
+        .then(res => {
+          console.log(res.body)
+          expect(res.body.savedComment.body).to.equal('test data comment');
+          expect(res.body.savedComment.belongs_to).to.equal(`${articleID}`);
+          expect(res.body.savedComment.created_by).to.equal('northcoder');
+        });
     })
   })
   describe('/topics', () => {
@@ -54,7 +68,6 @@ describe('/api', () => {
         .expect(200)
         .then(res => {
         expect(res.body.topics.length).to.equal(3)
-        expect(res.body.topics[0].title).to.equal('Football')
         });
     });
     it('GET returns all articles for a topic', () => {
@@ -78,6 +91,22 @@ describe('/api', () => {
         });
       });
     });
+  describe('/comments', () => {
+    it('DELETEs a comment', () => {
+      const data = { "comment": "delete this comment" };
+      const articleID = testData.articles[0]._id;
+      return request
+        .post(`/api/articles/${articleID}/comments`)
+        .send(data)
+      const commentID = data._id;
+      return request
+        .delete(`/api/comments/${commentID}`)
+        .expect(200)
+        .then(res => {
+          expect(res.body).to.be.an('object');
+        })
+    })
+  })
 })
 
 

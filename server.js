@@ -6,6 +6,7 @@ const app = express();
 const apiRouter = require('./routes/index');
 const mongoose = require('mongoose');
 const config = require('./config');
+const bodyParser = require('body-parser');
 
 let db = process.env.DB || config.DB[process.env.NODE_ENV];
 let port = process.env.PORT || config.PORT[process.env.NODE_ENV];
@@ -16,6 +17,8 @@ mongoose.Promise = Promise;
 mongoose.connect(db)
   .then(() => console.log(`successfully connected to...${db}`))
   .catch(err => console.log('connection failed', err));
+
+app.use(bodyParser.json());
 
 app.use('/api', apiRouter);
 
