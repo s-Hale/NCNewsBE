@@ -39,7 +39,19 @@ const postComment = (req, res, next) => {
     .catch(next);
 }
 
+const putArticleVote = (req, res, next) => {
+  const articleID = req.params.article_id;
+  const vote = req.query.vote;
+  Article.findOne({ _id: articleID }).lean()
+    .then(article => {
+      if (vote === 'up') article.votes += 1;
+      if (vote === 'down' && article.votes > 0) article.votes -= 1;
+      res.send({ article })
+    })
+    .catch(next);
+}
 
 
 
-module.exports = { getAllArticles, getCommentsByArticle, getArticleById, postComment };
+
+module.exports = { getAllArticles, getCommentsByArticle, getArticleById, postComment, putArticleVote };

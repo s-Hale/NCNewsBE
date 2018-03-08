@@ -46,7 +46,7 @@ describe('/api', () => {
         expect(res.body.article._id).to.equal(`${articleID}`)
       })
     })
-    it.only('POST posts a new comment to an article', () => {
+    it('POST posts a new comment to an article', () => {
       const data = { "comment": "test data comment" };
       const articleID = testData.articles[0]._id;
       return request
@@ -54,13 +54,38 @@ describe('/api', () => {
         .send(data)
         .expect(201)
         .then(res => {
-          console.log(res.body)
           expect(res.body.savedComment.body).to.equal('test data comment');
           expect(res.body.savedComment.belongs_to).to.equal(`${articleID}`);
           expect(res.body.savedComment.created_by).to.equal('northcoder');
-        });
-    })
-  })
+        })
+      })
+    it('PUT increases vote count of an article', () => {
+      const articleID = testData.articles[0]._id;
+      return request
+        .put(`/api/articles/${articleID}?vote=up`)
+        .expect(200)
+        .then(res => {
+          expect(res.body).to.be.an('object');
+          expect(res.body.article.votes).to.eql(1);
+          });
+      });
+    it('PUT decreases vote count of an article', () => {
+      const articleID = testData.articles[0]._id;
+      return request
+        .put(`/api/articles/${articleID}?vote=up`)
+        .expect(200)
+        return request
+        .put(`/api/articles/${articleID}?vote=up`)
+        .expect(200)
+        return request
+        .put(`/api/articles/${articleID}?vote=down`)
+        .expect(200)
+        .then(res => {
+          expect(res.body).to.be.an('object');
+          expect(res.body.article.votes).to.eql(1);
+          });
+      });
+  });
   describe('/topics', () => {
     it('GET returns all topics', () => {
       return request
@@ -106,8 +131,9 @@ describe('/api', () => {
           expect(res.body).to.be.an('object');
         })
     })
+   });
   })
-})
+
 
 
 

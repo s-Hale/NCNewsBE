@@ -4,7 +4,8 @@ const { deleteComment } = require('../controllers/comments');
 
 
 router.route('/:comment_id')
-  .delete(deleteComment);
+  .delete(deleteComment)
+
 
 
 module.exports = router;
