@@ -23,7 +23,9 @@ describe("/api", () => {
         .get("/api/articles")
         .expect(200)
         .then(res => {
-          expect(res.body.allArticles.length).to.equal(testData.articles.length);
+          expect(res.body.allArticles.length).to.equal(
+            testData.articles.length
+          );
         });
     });
     it("GET returns all comments for an individual article", () => {
@@ -111,7 +113,7 @@ describe("/api", () => {
         });
     });
   });
-  describe.only("/comments", () => {
+  describe("/comments", () => {
     it("DELETEs a comment", () => {
       const data = { comment: "delete this comment" };
       const articleID = testData.articles[0]._id;

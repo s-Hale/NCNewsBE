@@ -1,5 +1,4 @@
-
-var mongoose = require('mongoose');
+var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
 var ArticleSchema = new Schema({
@@ -26,4 +25,4 @@ var ArticleSchema = new Schema({
   }
 });
 
-module.exports = mongoose.model('articles', ArticleSchema);
+module.exports = mongoose.model("articles", ArticleSchema);
