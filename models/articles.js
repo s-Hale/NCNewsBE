@@ -8,7 +8,11 @@ var ArticleSchema = new Schema({
   },
   body: {
     type: String,
-    requied: true
+    required: true
+  },
+  imageURL: {
+    type: String,
+    required: false
   },
   belongs_to: {
     type: String,

@@ -44,11 +44,14 @@ const postComment = (req, res, next) => {
 const putArticleVote = (req, res, next) => {
   const articleID = req.params.article_id;
   const vote = req.query.vote;
-  Article.findOne({ _id: articleID })
+  const swing = vote === "up" ? 1 : -1;
+  Article.findByIdAndUpdate(
+    articleID,
+    { $inc: { votes: swing } },
+    { new: true }
+  )
     .lean()
     .then(article => {
-      if (vote === "up") article.votes += 1;
-      if (vote === "down" && article.votes > 0) article.votes -= 1;
       res.send({ article });
     })
     .catch(err => next(err));

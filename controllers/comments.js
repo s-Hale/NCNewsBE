@@ -2,28 +2,25 @@ const Comment = require("../models/comments");
 
 const deleteComment = (req, res, next) => {
   const commentID = req.params.comment_id;
-  Comment.findOne({ _id: commentID })
-    .lean()
-    .then(comment => {
-      if (comment.created_by === "northcoder")
-        return Comment.remove({ _id: commentID });
-      else res.status(403);
-    })
-    .then(() => res.status(200).send("comment deleted"))
-    .catch(next);
+  Comment.findByIdAndRemove(commentID).then(comment => {
+    res.status(200).send({ msg: "comment deleted" });
+  });
 };
 
 const putCommentVote = (req, res, next) => {
   const commentID = req.params.comment_id;
   const vote = req.query.vote;
-  Comment.findOne({ _id: commentID })
+  const swing = vote === "up" ? 1 : -1;
+  Comment.findByIdAndUpdate(
+    commentID,
+    { $inc: { votes: swing } },
+    { new: true }
+  )
     .lean()
     .then(comment => {
-      if (vote === "up") comment.votes += 1;
-      else if (vote === "down" && comment.votes) comment.votes -= 1;
       res.send({ comment });
     })
-    .catch(next);
+    .catch(err => next(err));
 };
 
 module.exports = { deleteComment, putCommentVote };
