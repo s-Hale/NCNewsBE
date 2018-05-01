@@ -13,18 +13,35 @@ const getArticleById = (req, res, next) => {
   const articleID = req.params.article_id;
   Article.findById(articleID)
     .lean()
-    .then(article => res.send({ article }))
-    .catch(next);
+    .then(article => {
+      if (!article) {
+        res.status(404);
+        res.statusMessage = "article not found.";
+        res.end();
+      }
+      res.send({ article });
+    })
+    .catch(err => {
+      err.status = 400;
+      next(err);
+    });
 };
 
 const getCommentsByArticle = (req, res, next) => {
   const articleID = req.params.article_id;
-
   Comment.find({ belongs_to: articleID })
     .then(comments => {
+      if (!comments) {
+        res.status(404);
+        res.statusMessage = "comments not found.";
+        res.end();
+      }
       res.status(200).send(comments);
     })
-    .catch(err => next(err));
+    .catch(err => {
+      err.status = 400;
+      next(err);
+    });
 };
 
 const postComment = (req, res, next) => {
@@ -43,8 +60,11 @@ const postComment = (req, res, next) => {
 
 const putArticleVote = (req, res, next) => {
   const articleID = req.params.article_id;
+  const articleVote = req.query.articleVote;
   const vote = req.query.vote;
-  const swing = vote === "up" ? 1 : -1;
+  let swing = 0;
+  if (vote === "up") swing = 1;
+  if (vote === "down" && articleVote > 0) swing = -1;
   Article.findByIdAndUpdate(
     articleID,
     { $inc: { votes: swing } },

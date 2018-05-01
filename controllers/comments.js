@@ -7,6 +7,8 @@ const deleteComment = (req, res, next) => {
   });
 };
 
+//edit comment
+
 const putCommentVote = (req, res, next) => {
   const commentID = req.params.comment_id;
   const vote = req.query.vote;
