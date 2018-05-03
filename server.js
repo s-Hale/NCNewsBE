@@ -9,7 +9,6 @@ const config = require("./config");
 const bodyParser = require("body-parser");
 
 let db = process.env.DB || config.DB[process.env.NODE_ENV];
-let port = process.env.PORT || config.PORT[process.env.NODE_ENV];
 
 mongoose.Promise = Promise;
 
@@ -24,9 +23,15 @@ app.use(bodyParser.json());
 
 app.use("/api", apiRouter);
 
-app.use("/*", (req, res) =>
+app.use("/*", (req, res, next) =>
   res.status(404).send({ status: 404, msg: "Page not found" })
 );
+
+app.use((err, req, res, next) => {
+  if (err.status === 404) {
+    res.status(404).send({ status: 404, msg: "Page not found" });
+  } else next(err);
+});
 
 app.use((err, req, res, next) => {
   if (err.status === 400)
@@ -35,9 +40,5 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => res.status(500).send(err));
-
-app.listen(port, function() {
-  console.log(`listening on port ${port}`);
-});
 
 module.exports = app;

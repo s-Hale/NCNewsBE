@@ -6,6 +6,4 @@ router
   .delete(deleteComment)
   .put(putCommentVote);
 
-//patch comment
-
 module.exports = router;

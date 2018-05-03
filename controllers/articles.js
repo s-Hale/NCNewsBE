@@ -4,9 +4,13 @@ const getAllArticles = (req, res, next) => {
   Article.find()
     .lean()
     .then(allArticles => {
-      res.send({ allArticles });
+      if (!allArticles) next({ status: 404, msg: "no articles found" });
+      else res.send({ allArticles });
     })
-    .catch(err => next(err));
+    .catch(err => {
+      err.status = 400;
+      next(err);
+    });
 };
 
 const getArticleById = (req, res, next) => {
@@ -15,11 +19,8 @@ const getArticleById = (req, res, next) => {
     .lean()
     .then(article => {
       if (!article) {
-        res.status(404);
-        res.statusMessage = "article not found.";
-        res.end();
-      }
-      res.send({ article });
+        next({ status: 404, msg: "article not found" });
+      } else res.send({ article });
     })
     .catch(err => {
       err.status = 400;
@@ -27,16 +28,14 @@ const getArticleById = (req, res, next) => {
     });
 };
 
+// adding specifics like article.body creates a type error, because article is null and it 'cannot read body of null'. how to fix?
+
 const getCommentsByArticle = (req, res, next) => {
   const articleID = req.params.article_id;
   Comment.find({ belongs_to: articleID })
     .then(comments => {
-      if (!comments) {
-        res.status(404);
-        res.statusMessage = "comments not found.";
-        res.end();
-      }
-      res.status(200).send(comments);
+      if (!comments) next({ status: 404, msg: "comments not found" });
+      else res.status(200).send(comments);
     })
     .catch(err => {
       err.status = 400;
@@ -52,6 +51,7 @@ const postComment = (req, res, next) => {
     created_by: req.body.username,
     created_at: new Date().getTime()
   });
+  if (!newComment.body) next({ status: 400, msg: "invalid post body" });
   newComment
     .save()
     .then(savedComment => res.status(201).send({ savedComment }))

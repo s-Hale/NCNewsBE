@@ -6,7 +6,8 @@
   "scripts": {
     "test": "mocha spec/*.spec.js --exit",
     "start": "node index.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "seed": "node"
   },
   "author": "",
   "license": "ISC",

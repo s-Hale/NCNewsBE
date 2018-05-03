@@ -7,12 +7,12 @@ const deleteComment = (req, res, next) => {
   });
 };
 
-//edit comment
-
 const putCommentVote = (req, res, next) => {
   const commentID = req.params.comment_id;
   const vote = req.query.vote;
-  const swing = vote === "up" ? 1 : -1;
+  let swing = 0;
+  if (vote === "up") swing = 1;
+  if (vote === "down") swing = -1;
   Comment.findByIdAndUpdate(
     commentID,
     { $inc: { votes: swing } },

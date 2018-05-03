@@ -47,6 +47,28 @@ describe("/api", () => {
           expect(res.body.article._id).to.equal(`${articleID}`);
         });
     });
+    it("GET returns a 400 error if ID not valid", () => {
+      const articleID = 4453;
+      return request
+        .get(`/api/articles/${articleID}`)
+        .expect(400)
+        .then(res => {
+          expect(res.text).to.equal(
+            JSON.stringify({ status: 400, msg: "Bad request" })
+          );
+        });
+    });
+    it("GET returns a 404 error if article not found", () => {
+      const articleID = "5ae83625de5eac3c44587a31";
+      return request
+        .get(`/api/articles/${articleID}`)
+        .expect(404)
+        .then(res => {
+          expect(res.text).to.equal(
+            JSON.stringify({ status: 404, msg: "Page not found" })
+          );
+        });
+    });
     it("POST posts a new comment to an article", () => {
       const data = { comment: "test data comment" };
       const articleID = testData.articles[0]._id;
@@ -60,6 +82,20 @@ describe("/api", () => {
           expect(res.body.savedComment.created_by).to.equal("northcoder");
         });
     });
+    it("POST returns an error for invalid comment post", () => {
+      const data = { invalid: 7 };
+      const articleID = testData.articles[0]._id;
+      return request
+        .post(`/api/articles/${articleID}/comments`)
+        .send(data)
+        .expect(400)
+        .then(res => {
+          expect(res.text).to.equal(
+            JSON.stringify({ status: 400, msg: "Bad request" })
+          );
+        });
+    });
+
     it("PUT increases vote count of an article", () => {
       const articleID = testData.articles[0]._id;
       return request
@@ -110,6 +146,17 @@ describe("/api", () => {
         .expect(200)
         .then(res => {
           expect(res.body.user.username).to.equal(username);
+        });
+    });
+    it("GET returns 404 if user not found", () => {
+      const username = "notfound";
+      return request
+        .get(`/api/users/${username}`)
+        .expect(404)
+        .then(res => {
+          expect(res.text).to.equal(
+            JSON.stringify({ status: 404, msg: "Page not found" })
+          );
         });
     });
   });

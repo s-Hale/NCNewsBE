@@ -5,12 +5,9 @@ const getUserByUsername = (req, res, next) => {
   User.findOne({ username: username }, { __v: false })
     .lean()
     .then(user => {
-      if (!user) {
-        res.status(404);
-        res.statusMessage = "user not found.";
-        res.end();
-      }
-      res.send({ user });
+      if (!user) 
+        next({ status: 404, msg: "user not found" })
+      else res.send({ user });
     })
     .catch(err => {
       err.status = 400;
