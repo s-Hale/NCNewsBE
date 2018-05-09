@@ -1,21 +1,20 @@
 const Comment = require("../models/comments");
 
 const deleteComment = (req, res, next) => {
-  const commentID = req.params.comment_id;
-  Comment.findByIdAndRemove(commentID).then(comment => {
+  const {comment_id} = req.params;
+  Comment.findByIdAndRemove(comment_id).then(comment => {
     res.status(200).send({ msg: "comment deleted" });
   });
 };
 
 const putCommentVote = (req, res, next) => {
-  const commentID = req.params.comment_id;
-  const vote = req.query.vote;
-  let swing = 0;
-  if (vote === "up") swing = 1;
-  if (vote === "down") swing = -1;
+  const { comment_id } = req.params;
+  const { vote } = req.query;
+  const inc = vote === 'up' ? 1 : vote === 'down' ? -1 : 0;
+
   Comment.findByIdAndUpdate(
-    commentID,
-    { $inc: { votes: swing } },
+    comment_id,
+    { $inc: { votes: inc } },
     { new: true }
   )
     .lean()

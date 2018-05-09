@@ -14,8 +14,8 @@ const getAllArticles = (req, res, next) => {
 };
 
 const getArticleById = (req, res, next) => {
-  const articleID = req.params.article_id;
-  Article.findById(articleID)
+  const { article_id } = req.params;
+  Article.findById(article_id)
     .lean()
     .then(article => {
       if (!article) {
@@ -28,11 +28,8 @@ const getArticleById = (req, res, next) => {
     });
 };
 
-// adding specifics like article.body creates a type error, because article is null and it 'cannot read body of null'. how to fix?
-
 const getCommentsByArticle = (req, res, next) => {
-  const articleID = req.params.article_id;
-  Comment.find({ belongs_to: articleID })
+  Comment.find( req.params )
     .then(comments => {
       if (!comments) next({ status: 404, msg: "comments not found" });
       else res.status(200).send(comments);
@@ -44,10 +41,10 @@ const getCommentsByArticle = (req, res, next) => {
 };
 
 const postComment = (req, res, next) => {
-  const articleID = req.params.article_id;
+  const { belongs_to } = req.params;
   const newComment = new Comment({
     body: req.body.comment,
-    belongs_to: articleID,
+    belongs_to,
     created_by: req.body.username,
     created_at: new Date().getTime()
   });
@@ -59,15 +56,13 @@ const postComment = (req, res, next) => {
 };
 
 const putArticleVote = (req, res, next) => {
-  const articleID = req.params.article_id;
+  const { article_id } = req.params;
   const articleVote = req.query.articleVote;
   const vote = req.query.vote;
-  let swing = 0;
-  if (vote === "up") swing = 1;
-  if (vote === "down" && articleVote > 0) swing = -1;
+  const inc = vote === 'up' ? 1 : vote === 'down' ? -1 : 0;
   Article.findByIdAndUpdate(
-    articleID,
-    { $inc: { votes: swing } },
+    article_id,
+    { $inc: { votes: inc } },
     { new: true }
   )
     .lean()

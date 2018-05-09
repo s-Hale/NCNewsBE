@@ -1,7 +1,7 @@
 const User = require("../models/users");
 
 const getUserByUsername = (req, res, next) => {
-  const username = req.params.username;
+  const { username } = req.params;
   User.findOne({ username: username }, { __v: false })
     .lean()
     .then(user => {
