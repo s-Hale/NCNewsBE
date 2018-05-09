@@ -4,6 +4,7 @@ const getAllArticles = (req, res, next) => {
   Article.find()
     .lean()
     .then(allArticles => {
+      console.log(allArticles)
       if (!allArticles) next({ status: 404, msg: "no articles found" });
       else res.send({ allArticles });
     })

@@ -16,6 +16,7 @@ var DB = require("../config.js").DB[process.env.NODE_ENV];
 console.log(DB);
 
 mongoose.connect(DB, function(err) {
+  mongoose.connection.db.dropDatabase();
   if (!err) {
     logger.info(`connected to database ${process.env.NODE_ENV}`);
     mongoose.connection.db.dropDatabase();

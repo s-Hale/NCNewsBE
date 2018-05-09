@@ -6,8 +6,9 @@
   "scripts": {
     "test": "mocha spec/*.spec.js --exit",
     "start": "node index.js",
-    "dev": "nodemon server.js",
-    "seed": "node ./seed/seed.js"
+    "dev": "nodemon index.js",
+    "seed": "node ./seed/seed.js",
+    "prodseed": "NODE_ENV=production npm run seed"
   },
   "author": "",
   "license": "ISC",
