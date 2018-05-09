@@ -5,7 +5,9 @@ const express = require("express");
 const app = express();
 const apiRouter = require("./routes/index");
 const mongoose = require("mongoose");
-const config = require("./config");
+if (process.env.NODE_ENV !== 'production') {
+  const config = require("./config");
+  }
 const bodyParser = require("body-parser");
 
 let db = process.env.DB || config.DB[process.env.NODE_ENV];
